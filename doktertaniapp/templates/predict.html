@@ -1,0 +1,268 @@
+{% extends 'base.html' %}
+{% load static %}
+{% csrf_token %}
+{% block content %}
+<script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+<style>
+    body {
+        background: url("{% static 'images/Kebun 1.png' %}") no-repeat center center fixed;
+        background-size: cover;
+    }
+</style>
+      <!-- loader  -->
+      <div class="loader_bg">
+         <div class="loader"><img src="{% static 'images/load3.gif' %}" alt="#" /></div>
+      </div>
+      <!-- end loader -->
+
+      <!-- header -->
+      <header>
+         <!-- header inner -->
+         <div class="header">
+            <div class="container-fluid">
+               <div class="row">
+                  <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col logo_section">
+                     <div class="full">
+                        <div class="center-desk">
+                           <div class="logo">
+                              <a href="/"><img src="{% static 'images/logo.png' %}" alt="#" /></a>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+                  <div class="col-xl-9 col-lg-9 col-md-9 col-sm-9">
+                     <nav class="navigation navbar navbar-expand-md navbar-dark ">
+                        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExample04" aria-controls="navbarsExample04" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                        </button>
+                        <div class="collapse navbar-collapse" id="navbarsExample04">
+                           <ul class="navbar-nav mr-auto">
+                              <li class="nav-item">
+                                 <a class="nav-link" href="/"> Home  </a>
+                              </li>
+                              <li class="nav-item active">
+                                 <a class="nav-link" href="/option/">Predict</a>
+                              </li>
+                              <li class="nav-item">
+                                 <a class="nav-link" href="/product/">Products </a>
+                              </li>
+                              <li class="nav-item d_none">
+                                 <a class="nav-link" href="/product/"><i class="fa fa-search" aria-hidden="true"></i></a>
+                              </li>
+                           </ul>
+                        </div>
+                     </nav>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </header>
+      <!-- end header inner -->
+      <!-- end header -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prediksi Penyakit Tumbuhan Cabe</title>
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/responsive.css' %}">
+    <link rel="stylesheet" href="{% static 'css/jquery.mCustomScrollbar.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/font-awesome.min.css' %}">
+    <style>
+        /* Form Container Styling */
+        .form-container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 30px;
+            background: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            text-align: left;
+            opacity: 0.9;
+        }
+
+        .form-container h1 {
+            font-family: 'Rajdhani', sans-serif;
+            margin-bottom: 20px;
+            font-size: 28px;
+            color: #333;
+            text-align: center;
+            font-weight: 700;
+        }
+
+        .form-container form {
+            font-family: 'Rajdhani', sans-serif;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            align-items: center;
+            font-weight: 600
+        }
+
+        #id_symptoms {
+            display: grid;
+            grid-template-columns: repeat(3, 4fr); /* Dua kolom dalam satu baris */
+            gap: 10px; /* Jarak antar elemen */
+        }
+
+        .form-container form button {
+            padding: 12px 25px;
+            font-family: 'Rajdhani', sans-serif;
+            background: black;
+            border: none;
+            color: #f4cb1e;
+            font-size: 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+            font-weight: bold;
+        }
+
+        .form-container form button:hover {
+            background-color:#f4cb1e;
+            color: black;
+        }
+
+        /* Result Container Styling */
+        .result-container {
+            margin-top: 30px;
+            opacity: 0.9;
+        }
+
+        .result-container h2 {
+            color: #333;
+            font-family: 'Rajdhani', sans-serif;
+            margin-bottom: 15px;
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .result-container ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .result-container ul li {
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 600;
+            background: #f8f9fa;
+            margin: 5px 0;
+            padding: 15px;
+            border-radius: 5px;
+            font-size: 20px;
+            color: #333;
+        }
+        
+        /* CSS untuk mengatur lebar modal */
+        #resultModal .modal-dialog {
+            max-width: 1000px; /* Lebar maksimum modal *//* Lebar modal (dapat disesuaikan) */
+        }
+
+        /* Penyesuaian teks pada modal jika lebih panjang */
+        #resultModal .modal-body {
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+
+    </style>
+</head>
+    <div class="form-container">
+        <h1>Prediksi Penyakit Tumbuhan</h1>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Prediksi</button>
+        </form>
+        {% if prediksi_penyakit %}
+            <div class="result-container">
+                <h2>Hasil Prediksi:</h2>
+                <ul id="results">
+                    <div id="results">
+                        <template>
+                            <li v-for="(penyakit,i) in prediksiPenyakit" :key="penyakit" >
+                                    <button @click="getPenyakitId(penyakit)">
+                                    <strong>[[ penyakit ]] 
+                                    </strong>
+                                    </button>
+                            </li>
+                        </template>      
+                    </div>
+                </ul>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="resultModal" tabindex="-1" aria-labelledby="resultModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="resultModalLabel">Hasil Prediksi</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p id="modal-content"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        var app = new Vue({
+            el: '#results',
+            delimiters: ['[[', ']]'],
+            data: {
+                prediksiPenyakit: {{ prediksi_penyakit|safe }},
+                hasil: {}
+            },
+            methods: {
+            getPenyakitId(penyakit) {
+                let url = 'http://127.0.0.1:8000/api/sarancabai/';
+                fetch(url)
+                    .then(response => response.json())
+                    .then(data => {
+                        let found = data.find(item => item.penyakit === penyakit);
+                        let modalContent = document.getElementById('modal-content');
+                        modalContent.innerHTML = ''; // Clear existing content
+
+                        if (found) {
+                            // Add HTML formatted string
+                            let img = document.createElement('img');
+                            img.src = `{% static 'images/img_pred/' %}` + found.id + '.jpg';
+                            img.style.width = '20%'; // Optional: Adjust the image size
+                            modalContent.appendChild(img);
+
+                            let htmlString = 
+                                '<br><strong>Nama Penyakit: </strong>' + penyakit +'<br><br>'+
+                                '<strong>Gejala Umum:</strong><br>'+found.gejala_umum.replace(/\n/g, '<br></br>')+'<br><br>'+
+                                '<strong>Saran:</strong><br>' + found.saran.replace(/\n/g, '<br></br>') + '<br><br>'+
+                                '<strong>Obat:</strong><br>'
+                            ;
+                            modalContent.innerHTML += htmlString;
+
+                            // Add the text from found.obat using innerText
+                            let obatText = document.createElement('span');
+                            obatText.innerText = found.obat;
+                            modalContent.appendChild(obatText);
+                        } else {
+                            modalContent.innerText = 'Error: ' + penyakit;
+                        }
+
+                        $('#resultModal').modal('show');
+                    })
+                    .catch(error => console.log(error));
+            }
+        }
+        });
+    </script>
+
+    </div>
+
+
+{% endblock %}

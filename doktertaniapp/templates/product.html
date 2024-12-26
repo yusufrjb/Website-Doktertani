@@ -1,0 +1,175 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<!-- Remove the duplicate Vue.js script -->
+<script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+<style>
+    body {
+        background: url("{% static 'images/Kebun 1.png' %}") no-repeat center center fixed;
+        background-size: cover;
+    }
+</style>
+<style>
+/* Form Container Styling */
+.form-container {
+    max-width: 1200px;
+    margin: 50px auto;
+    padding: 30px;
+    background: #ffffff;
+    border-radius: 10px;
+    text-align: left;
+    font-family: 'Rajdhani', sans-serif;
+    color: black;
+    font-weight: 500;
+    opacity: 0.9;
+}
+
+.form-container h1 {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 28px;
+    color: #333;
+    text-align: center;
+    font-weight: 700;
+}
+
+.form-container form {
+    font-family: 'Rajdhani', sans-serif;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+    font-weight: 600
+}
+
+.form-container table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.form-container th, .form-container td {
+    padding: 10px;
+    text-align: justify;
+    border: 1px solid #ddd;
+}
+
+.form-container th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+}
+
+
+
+
+
+
+</style>
+<!-- loader  -->
+<div class="loader_bg">
+    <div class="loader"><img src="{% static 'images/load3.gif' %}" alt="#" /></div>
+</div>
+<!-- end loader -->
+<!-- header -->
+<header>
+    <!-- header inner -->
+    <div class="header">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col logo_section">
+                    <div class="full">
+                        <div class="center-desk">
+                            <div class="logo">
+                                <a href="/"><img src="{% static 'images/logo.png' %}" alt="#" /></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-9 col-lg-9 col-md-9 col-sm-9">
+                    <nav class="navigation navbar navbar-expand-md navbar-dark ">
+                        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExample04" aria-controls="navbarsExample04" aria-expanded="false" aria-label="Toggle navigation">
+                            <span class="navbar-toggler-icon"></span>
+                        </button>
+                        <div class="collapse navbar-collapse" id="navbarsExample04">
+                            <ul class="navbar-nav mr-auto">
+                                <li class="nav-item">
+                                    <a class="nav-link" href="/"> Home  </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="/option/">Predict</a>
+                                </li>
+                                <li class="nav-item active">
+                                    <a class="nav-link" href="/product/">Products </a>
+                                </li>
+                                <li class="nav-item d_none">
+                                    <a class="nav-link" href="/product/"><i class="fa fa-search" aria-hidden="true"></i></a>
+                                </li>
+                            </ul>
+                        </div>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+<body>
+    <!-- end header inner -->
+    <!-- end header -->
+    <div class="form-container">
+        <div id="obat">
+            <h1>[[ hasil ]]</h1>
+
+            <input type="text" v-model="search" placeholder="Search for medicine..." class="form-control" border="1">
+            <table border="1" width="100%">
+                <thead>
+                    <tr>
+                        <th>NO.</th>
+                        <th>NAMA OBAT</th>
+                        <th>DESKRIPSI</th>
+                        <th>HARGA</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="(o, i) in filteredDataobat" :key="o">
+                        <td>[[ o.id ]].</td>
+                        <td>[[ o.obat ]]</td>
+                        <td>[[ o.diskripsi ]]</td>
+                        <td>[[ o.harga ]]</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <script>
+        var obat = new Vue({
+    el: '#obat',
+    delimiters: ['[[', ']]'],
+    data: {
+        hasil: 'Obat',
+        dataobat: [],
+        search: ''
+            },
+            computed: {
+                filteredDataobat() {
+                    let self = this;
+                    return this.dataobat.filter(function (item) {
+                        return item.obat.toLowerCase().includes(self.search.toLowerCase()) || 
+                               item.diskripsi.toLowerCase().includes(self.search.toLowerCase()) || 
+                               item.harga.toString().includes(self.search);
+                    });
+                }
+    },
+
+    mounted() {
+        let url = "http://127.0.0.1:8000/api/obat/";
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                this.dataobat = data
+
+            })
+    }
+})
+    </script>
+    <script src="{% static 'js/custom.js' %}"></script>
+</body>
+{% endblock %}
